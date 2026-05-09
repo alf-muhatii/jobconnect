@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
@@ -156,7 +157,10 @@ fun QualifiedCandidatesPage(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(candidates) { user ->
-                        CandidateItem(user = user)
+                        CandidateItem(
+                            user = user,
+                            onRemoveClick = { viewModel.removeCandidate(jobClassId, user.id) }
+                        )
                     }
                     item { Spacer(modifier = Modifier.height(80.dp)) } // Space for FAB
                 }
@@ -166,7 +170,7 @@ fun QualifiedCandidatesPage(
 }
 
 @Composable
-fun CandidateItem(user: User) {
+fun CandidateItem(user: User, onRemoveClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -184,12 +188,15 @@ fun CandidateItem(user: User) {
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(16.dp))
-            Column {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(text = user.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
                 Text(text = user.email, style = MaterialTheme.typography.bodySmall)
                 if (user.bio.isNotEmpty()) {
                     Text(text = user.bio, style = MaterialTheme.typography.bodySmall, maxLines = 1)
                 }
+            }
+            IconButton(onClick = onRemoveClick) {
+                Icon(Icons.Default.Delete, contentDescription = "Remove", tint = MaterialTheme.colorScheme.error)
             }
         }
     }

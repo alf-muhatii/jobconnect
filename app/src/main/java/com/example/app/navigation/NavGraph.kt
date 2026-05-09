@@ -178,6 +178,7 @@ fun NavGraph(navController: NavHostController) {
                 val receiverId = backStackEntry.arguments?.getString("receiverId") ?: ""
                 ChatScreen(
                     viewModel = chatViewModel,
+                    qualViewModel = qualifiedCandidateViewModel,
                     receiverId = receiverId,
                     onBack = { navController.popBackStack() }
                 )

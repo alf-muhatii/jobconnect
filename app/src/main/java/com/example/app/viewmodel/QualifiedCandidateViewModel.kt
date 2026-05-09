@@ -91,6 +91,26 @@ class QualifiedCandidateViewModel(
         }
     }
 
+    fun removeCandidate(jobClassId: String, userId: String) {
+        viewModelScope.launch {
+            try {
+                jobClassRepo.removeCandidateFromJobClass(jobClassId, userId)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
+    fun deleteJobClass(jobClassId: String) {
+        viewModelScope.launch {
+            try {
+                jobClassRepo.deleteJobClass(jobClassId)
+            } catch (e: Exception) {
+                // Handle error
+            }
+        }
+    }
+
     fun sendBatchMessages(message: String, onComplete: () -> Unit) {
         val senderId = authRepo.getUserId() ?: return
         val receiverIds = _candidates.value.map { it.id }

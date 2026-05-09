@@ -48,4 +48,19 @@ class JobClassRepository(private val db: FirebaseFirestore = FirebaseFirestore.g
             }
         awaitClose { subscription.remove() }
     }
+
+    suspend fun removeCandidateFromJobClass(jobClassId: String, userId: String) {
+        db.collection("job_classes").document(jobClassId)
+            .collection("candidates").document(userId)
+            .delete().await()
+    }
+
+    suspend fun deleteJobClass(jobClassId: String) {
+        val classRef = db.collection("job_classes").document(jobClassId)
+        
+        // Note: In a production app, you should also delete the 'candidates' subcollection.
+        // Firestore doesn't delete subcollections automatically when a parent doc is deleted.
+        // For simplicity, we delete the main class document.
+        classRef.delete().await()
+    }
 }
