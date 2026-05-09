@@ -14,9 +14,15 @@ import coil.compose.AsyncImage
 import com.example.app.model.User
 
 @Composable
-fun UserCard(user: User, isFollowing: Boolean, onFollowClick: () -> Unit, onClick: () -> Unit) {
+fun UserCard(
+    user: User,
+    isFollowing: Boolean,
+    onFollowClick: () -> Unit,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp)
             .clickable { onClick() }
