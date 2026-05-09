@@ -67,6 +67,18 @@ fun NavGraph(navController: NavHostController) {
         }
     })
 
+    val savedJobsViewModel: SavedJobsViewModel = viewModel(factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+            return SavedJobsViewModel(authRepo, userRepo, jobRepo) as T
+        }
+    })
+
+    val notificationViewModel: NotificationViewModel = viewModel(factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+            return NotificationViewModel(authRepo, userRepo, jobRepo, chatRepo) as T
+        }
+    })
+
     val qualifiedCandidateViewModel: QualifiedCandidateViewModel = viewModel(factory = object : androidx.lifecycle.ViewModelProvider.Factory {
         override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
             return QualifiedCandidateViewModel(jobClassRepo, userRepo, chatRepo, authRepo) as T
@@ -123,7 +135,27 @@ fun NavGraph(navController: NavHostController) {
             composable(Screen.Home.route) {
                 HomeScreen(
                     viewModel = homeViewModel,
-                    onPostJobClick = { navController.navigate(Screen.PostJob.route) }
+                    onPostJobClick = { navController.navigate(Screen.PostJob.route) },
+                    onNotificationsClick = { navController.navigate(Screen.Notifications.route) },
+                    onNavigateToSaved = { navController.navigate(Screen.SavedJobs.route) }
+                )
+            }
+            composable(Screen.Notifications.route) {
+                NotificationsScreen(
+                    viewModel = notificationViewModel,
+                    homeViewModel = homeViewModel,
+                    onBack = { navController.popBackStack() },
+                    onNotificationClick = { userId, type ->
+                        when (type) {
+                            com.example.app.model.NotificationType.MESSAGE -> 
+                                navController.navigate(Screen.Chat.createRoute(userId))
+                            com.example.app.model.NotificationType.NEW_FOLLOWER -> 
+                                navController.navigate(Screen.Chat.createRoute(userId))
+                            else -> 
+                                navController.navigate(Screen.Home.route)
+                        }
+                    },
+                    onNavigateToSaved = { navController.navigate(Screen.SavedJobs.route) }
                 )
             }
             composable(Screen.Search.route) {
@@ -174,7 +206,16 @@ fun NavGraph(navController: NavHostController) {
                     },
                     onQualifiedCandidateClick = {
                         navController.navigate(Screen.QualifiedCandidate.route)
+                    },
+                    onSavedJobsClick = {
+                        navController.navigate(Screen.SavedJobs.route)
                     }
+                )
+            }
+            composable(Screen.SavedJobs.route) {
+                SavedJobsScreen(
+                    viewModel = savedJobsViewModel,
+                    onBack = { navController.popBackStack() }
                 )
             }
             composable(Screen.QualifiedCandidate.route) {

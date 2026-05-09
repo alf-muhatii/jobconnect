@@ -44,4 +44,19 @@ class JobRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIns
         }
         batch.commit().await()
     }
+
+    fun getJobsByIds(jobIds: List<String>): Flow<List<JobPost>> = callbackFlow {
+        if (jobIds.isEmpty()) {
+            trySend(emptyList())
+            awaitClose { }
+            return@callbackFlow
+        }
+        val subscription = db.collection("jobs")
+            .whereIn("id", jobIds)
+            .addSnapshotListener { snapshot, _ ->
+                val jobs = snapshot?.toObjects(JobPost::class.java) ?: emptyList()
+                trySend(jobs.sortedByDescending { it.timestamp })
+            }
+        awaitClose { subscription.remove() }
+    }
 }

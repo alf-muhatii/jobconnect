@@ -75,6 +75,18 @@ class UserRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
         awaitClose { subscription.remove() }
     }
 
+    suspend fun saveJob(userId: String, jobId: String) {
+        db.collection("users").document(userId)
+            .update("savedJobs", FieldValue.arrayUnion(jobId))
+            .await()
+    }
+
+    suspend fun unsaveJob(userId: String, jobId: String) {
+        db.collection("users").document(userId)
+            .update("savedJobs", FieldValue.arrayRemove(jobId))
+            .await()
+    }
+
     fun getFollowedUsers(userId: String): Flow<List<User>> = callbackFlow {
         // First get the following list of current user
         val subscription = db.collection("users").document(userId)

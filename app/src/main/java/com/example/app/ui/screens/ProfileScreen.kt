@@ -2,10 +2,10 @@ package com.example.app.ui.screens
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
@@ -30,7 +30,8 @@ fun ProfileScreen(
     onFollowersClick: (String) -> Unit,
     onFollowingClick: (String) -> Unit,
     onManageJobsClick: () -> Unit,
-    onQualifiedCandidateClick: () -> Unit
+    onQualifiedCandidateClick: () -> Unit,
+    onSavedJobsClick: () -> Unit
 ) {
     val user by profileViewModel.userProfile.collectAsState()
     var showNameDialog by remember { mutableStateOf(false) }
@@ -169,6 +170,17 @@ fun ProfileScreen(
             colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.tertiary)
         ) {
             Text("Qualified Candidate")
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Saved Jobs Action
+        OutlinedButton(
+            onClick = onSavedJobsClick,
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text("Saved Jobs")
         }
         
         Spacer(modifier = Modifier.height(8.dp))

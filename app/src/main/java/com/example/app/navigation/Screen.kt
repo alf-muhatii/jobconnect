@@ -27,4 +27,6 @@ sealed class Screen(val route: String) {
     object SendApprovalLetter : Screen("send_approval_letter/{jobClassId}") {
         fun createRoute(id: String) = "send_approval_letter/$id"
     }
+    object Notifications : Screen("notifications")
+    object SavedJobs : Screen("saved_jobs")
 }

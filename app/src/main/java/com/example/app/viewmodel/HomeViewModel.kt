@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.app.model.JobPost
+import com.example.app.model.User
 import com.example.app.repository.AuthRepository
 import com.example.app.repository.JobRepository
 import com.example.app.repository.UserRepository
@@ -24,11 +25,46 @@ class HomeViewModel(
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing: StateFlow<Boolean> = _isRefreshing
 
+    private val _currentUser = MutableStateFlow<User?>(null)
+    val currentUser: StateFlow<User?> = _currentUser
+
     private val _userJobs = MutableStateFlow<List<JobPost>>(emptyList())
     val userJobs: StateFlow<List<JobPost>> = _userJobs
 
     init {
         loadJobs()
+        loadCurrentUser()
+    }
+
+    private fun loadCurrentUser() {
+        val userId = authRepo.getUserId() ?: return
+        viewModelScope.launch {
+            userRepo.searchUsers().collectLatest { allUsers ->
+                _currentUser.value = allUsers.find { it.id == userId }
+            }
+        }
+    }
+
+    fun saveJob(jobId: String) {
+        val userId = authRepo.getUserId() ?: return
+        viewModelScope.launch {
+            try {
+                userRepo.saveJob(userId, jobId)
+            } catch (e: Exception) {
+                Log.e("HomeVM", "Failed to save job: ${e.message}")
+            }
+        }
+    }
+
+    fun unsaveJob(jobId: String) {
+        val userId = authRepo.getUserId() ?: return
+        viewModelScope.launch {
+            try {
+                userRepo.unsaveJob(userId, jobId)
+            } catch (e: Exception) {
+                Log.e("HomeVM", "Failed to unsave job: ${e.message}")
+            }
+        }
     }
 
     fun loadUserJobs() {
