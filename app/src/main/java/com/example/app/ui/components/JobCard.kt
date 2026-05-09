@@ -26,11 +26,12 @@ fun JobCard(
     job: JobPost,
     isSaved: Boolean = false,
     onSaveClick: () -> Unit = {},
-    showShare: Boolean = true
+    showShare: Boolean = true,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         elevation = CardDefaults.cardElevation(4.dp)
