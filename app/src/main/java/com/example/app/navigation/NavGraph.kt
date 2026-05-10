@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Message
 import androidx.compose.material.icons.filled.Person
@@ -96,6 +97,7 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
         }
     })
 
+    val currentFeedMode by homeViewModel.feedMode.collectAsState()
     var showModeDialog by remember { mutableStateOf(false) }
 
     if (showModeDialog) {
@@ -105,16 +107,36 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
             text = {
                 Column {
                     ListItem(
-                        headlineContent = { Text("Discover Mode") },
+                        headlineContent = { 
+                            Text(
+                                "Discover Mode",
+                                color = if (currentFeedMode == HomeFeedMode.DISCOVER) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            ) 
+                        },
                         supportingContent = { Text("See all jobs from everyone") },
+                        trailingContent = {
+                            if (currentFeedMode == HomeFeedMode.DISCOVER) {
+                                Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                        },
                         modifier = Modifier.clickable {
                             homeViewModel.setFeedMode(HomeFeedMode.DISCOVER)
                             showModeDialog = false
                         }
                     )
                     ListItem(
-                        headlineContent = { Text("Pro Mode") },
+                        headlineContent = { 
+                            Text(
+                                "Pro Mode",
+                                color = if (currentFeedMode == HomeFeedMode.PRO) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            ) 
+                        },
                         supportingContent = { Text("Only see jobs from accounts you follow") },
+                        trailingContent = {
+                            if (currentFeedMode == HomeFeedMode.PRO) {
+                                Icon(Icons.Default.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            }
+                        },
                         modifier = Modifier.clickable {
                             homeViewModel.setFeedMode(HomeFeedMode.PRO)
                             showModeDialog = false
