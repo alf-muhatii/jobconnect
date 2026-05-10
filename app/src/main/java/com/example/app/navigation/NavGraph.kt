@@ -1,5 +1,10 @@
 package com.example.app.navigation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -85,6 +90,40 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
         }
     })
 
+    var showModeDialog by remember { mutableStateOf(false) }
+
+    if (showModeDialog) {
+        AlertDialog(
+            onDismissRequest = { showModeDialog = false },
+            title = { Text("Select Feed Mode") },
+            text = {
+                Column {
+                    ListItem(
+                        headlineContent = { Text("Discover Mode") },
+                        supportingContent = { Text("See all jobs from everyone") },
+                        modifier = Modifier.clickable {
+                            homeViewModel.setFeedMode(HomeFeedMode.DISCOVER)
+                            showModeDialog = false
+                        }
+                    )
+                    ListItem(
+                        headlineContent = { Text("Pro Mode") },
+                        supportingContent = { Text("Only see jobs from accounts you follow") },
+                        modifier = Modifier.clickable {
+                            homeViewModel.setFeedMode(HomeFeedMode.PRO)
+                            showModeDialog = false
+                        }
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { showModeDialog = false }) {
+                    Text("Close")
+                }
+            }
+        )
+    }
+
     val startDestination = Screen.Splash.route
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
@@ -93,7 +132,10 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
     Scaffold(
         bottomBar = {
             if (currentRoute in listOf(Screen.Home.route, Screen.Search.route, Screen.Messages.route, Screen.Profile.route)) {
-                BottomNavigationBar(navController)
+                BottomNavigationBar(
+                    navController = navController,
+                    onHomeLongClick = { showModeDialog = true }
+                )
             }
         }
     ) { padding ->
@@ -302,8 +344,9 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomNavigationBar(navController: NavHostController) {
+fun BottomNavigationBar(navController: NavHostController, onHomeLongClick: () -> Unit) {
     val items = listOf(
         BottomNavItem("Home", Screen.Home.route, Icons.Default.Home),
         BottomNavItem("Search", Screen.Search.route, Icons.Default.Search),
@@ -315,16 +358,37 @@ fun BottomNavigationBar(navController: NavHostController) {
         val currentRoute = navBackStackEntry?.destination?.route
         items.forEach { item ->
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = item.title) },
+                icon = { 
+                    if (item.route == Screen.Home.route) {
+                        Box(modifier = Modifier.combinedClickable(
+                            onClick = {
+                                navController.navigate(item.route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            onLongClick = onHomeLongClick
+                        )) {
+                            Icon(item.icon, contentDescription = item.title)
+                        }
+                    } else {
+                        Icon(item.icon, contentDescription = item.title)
+                    }
+                },
                 label = { Text(item.title) },
                 selected = currentRoute == item.route,
                 onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
+                    if (item.route != Screen.Home.route) {
+                        navController.navigate(item.route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
                 }
             )

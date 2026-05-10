@@ -13,11 +13,18 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+enum class HomeFeedMode {
+    DISCOVER, PRO
+}
+
 class HomeViewModel(
     private val jobRepo: JobRepository = JobRepository(),
     private val authRepo: AuthRepository = AuthRepository(),
     private val userRepo: UserRepository = UserRepository()
 ) : ViewModel() {
+
+    private val _feedMode = MutableStateFlow(HomeFeedMode.DISCOVER)
+    val feedMode: StateFlow<HomeFeedMode> = _feedMode
 
     private val _jobs = MutableStateFlow<List<JobPost>>(emptyList())
     val jobs: StateFlow<List<JobPost>> = _jobs
@@ -34,6 +41,10 @@ class HomeViewModel(
     init {
         loadJobs()
         loadCurrentUser()
+    }
+
+    fun setFeedMode(mode: HomeFeedMode) {
+        _feedMode.value = mode
     }
 
     private fun loadCurrentUser() {

@@ -41,15 +41,22 @@ fun HomeScreen(
     val jobs by viewModel.jobs.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val currentUser by viewModel.currentUser.collectAsState()
+    val feedMode by viewModel.feedMode.collectAsState()
 
     var searchQuery by remember { mutableStateOf("") }
     var showSavedPopup by remember { mutableStateOf(false) }
 
-    val filteredJobs = remember(jobs, searchQuery) {
-        if (searchQuery.isEmpty()) {
-            jobs
+    val filteredJobs = remember(jobs, searchQuery, feedMode, currentUser) {
+        val baseList = if (feedMode == com.example.app.viewmodel.HomeFeedMode.PRO && currentUser != null) {
+            jobs.filter { it.authorId in currentUser!!.following }
         } else {
-            jobs.filter {
+            jobs
+        }
+
+        if (searchQuery.isEmpty()) {
+            baseList
+        } else {
+            baseList.filter {
                 it.title.contains(searchQuery, ignoreCase = true)
             }
         }
