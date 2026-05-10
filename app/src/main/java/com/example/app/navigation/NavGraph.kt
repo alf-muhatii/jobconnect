@@ -418,9 +418,9 @@ fun BottomNavigationBar(
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .navigationBarsPadding(),
         shape = RoundedCornerShape(32.dp),
-        tonalElevation = 8.dp,
-        shadowElevation = 8.dp,
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+        tonalElevation = 0.dp,
+        shadowElevation = 12.dp,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.65f)
     ) {
         NavigationBar(
             containerColor = androidx.compose.ui.graphics.Color.Transparent,
