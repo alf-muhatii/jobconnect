@@ -21,7 +21,7 @@ import com.example.app.ui.screens.*
 import com.example.app.viewmodel.*
 
 @Composable
-fun NavGraph(navController: NavHostController) {
+fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
     val context = LocalContext.current
     
     // Repositories
@@ -186,30 +186,32 @@ fun NavGraph(navController: NavHostController) {
             composable(Screen.Profile.route) {
                 ProfileScreen(
                     profileViewModel = profileViewModel,
-                    authViewModel = authViewModel,
                     onEditProfileClick = { navController.navigate(Screen.EditProfile.route) },
-                    onLogoutSuccess = {
-                        profileViewModel.clear()
-                        chatViewModel.clear()
-                        navController.navigate(Screen.Login.route) {
-                            popUpTo(0)
-                        }
-                    },
-                    onPostJobClick = { navController.navigate(Screen.PostJob.route) },
                     onFollowersClick = { userId ->
                         navController.navigate(Screen.Followers.createRoute(userId))
                     },
                     onFollowingClick = { userId ->
                         navController.navigate(Screen.Following.createRoute(userId))
                     },
-                    onManageJobsClick = {
-                        navController.navigate(Screen.ManageJobs.route)
-                    },
-                    onQualifiedCandidateClick = {
-                        navController.navigate(Screen.QualifiedCandidate.route)
-                    },
-                    onSavedJobsClick = {
-                        navController.navigate(Screen.SavedJobs.route)
+                    onSettingsClick = { navController.navigate(Screen.Settings.route) }
+                )
+            }
+            composable(Screen.Settings.route) {
+                SettingsScreen(
+                    themeViewModel = themeViewModel,
+                    authViewModel = authViewModel,
+                    onBack = { navController.popBackStack() },
+                    onEditProfileClick = { navController.navigate(Screen.EditProfile.route) },
+                    onPostJobClick = { navController.navigate(Screen.PostJob.route) },
+                    onManageJobsClick = { navController.navigate(Screen.ManageJobs.route) },
+                    onQualifiedCandidateClick = { navController.navigate(Screen.QualifiedCandidate.route) },
+                    onSavedJobsClick = { navController.navigate(Screen.SavedJobs.route) },
+                    onLogoutSuccess = {
+                        profileViewModel.clear()
+                        chatViewModel.clear()
+                        navController.navigate(Screen.Login.route) {
+                            popUpTo(0)
+                        }
                     }
                 )
             }
