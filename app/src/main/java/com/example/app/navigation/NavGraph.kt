@@ -6,19 +6,19 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Message
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -412,48 +412,66 @@ fun BottomNavigationBar(
         BottomNavItem("Messages", Screen.Messages.route, Icons.Default.Message),
         BottomNavItem("Profile", Screen.Profile.route, Icons.Default.Person)
     )
-    NavigationBar {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        items.forEach { item ->
-            NavigationBarItem(
-                icon = { 
-                    val isHome = item.route == Screen.Home.route
-                    val isProfile = item.route == Screen.Profile.route
-                    
-                    if (isHome || isProfile) {
-                        Box(modifier = Modifier.combinedClickable(
-                            onClick = {
-                                navController.navigate(item.route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
+
+    Surface(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .navigationBarsPadding(),
+        shape = RoundedCornerShape(32.dp),
+        tonalElevation = 8.dp,
+        shadowElevation = 8.dp,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
+    ) {
+        NavigationBar(
+            containerColor = androidx.compose.ui.graphics.Color.Transparent,
+            modifier = Modifier.height(72.dp),
+            windowInsets = WindowInsets(0, 0, 0, 0)
+        ) {
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            items.forEach { item ->
+                NavigationBarItem(
+                    icon = { 
+                        val isHome = item.route == Screen.Home.route
+                        val isProfile = item.route == Screen.Profile.route
+                        
+                        if (isHome || isProfile) {
+                            Box(modifier = Modifier.combinedClickable(
+                                onClick = {
+                                    navController.navigate(item.route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
                                     }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            onLongClick = if (isHome) onHomeLongClick else onProfileLongClick
-                        )) {
+                                },
+                                onLongClick = if (isHome) onHomeLongClick else onProfileLongClick
+                            )) {
+                                Icon(item.icon, contentDescription = item.title)
+                            }
+                        } else {
                             Icon(item.icon, contentDescription = item.title)
                         }
-                    } else {
-                        Icon(item.icon, contentDescription = item.title)
-                    }
-                },
-                label = { Text(item.title) },
-                selected = currentRoute == item.route,
-                onClick = {
-                    if (item.route != Screen.Home.route && item.route != Screen.Profile.route) {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
+                    },
+                    label = { Text(item.title, style = MaterialTheme.typography.labelSmall) },
+                    selected = currentRoute == item.route,
+                    colors = NavigationBarItemDefaults.colors(
+                        indicatorColor = MaterialTheme.colorScheme.primaryContainer
+                    ),
+                    onClick = {
+                        if (item.route != Screen.Home.route && item.route != Screen.Profile.route) {
+                            navController.navigate(item.route) {
+                                popUpTo(navController.graph.startDestinationId) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     }
-                }
-            )
+                )
+            }
         }
     }
 }
