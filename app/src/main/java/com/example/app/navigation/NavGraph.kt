@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -166,12 +167,14 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
                     onProfileLongClick = { navController.navigate(Screen.Settings.route) }
                 )
             }
-        }
+        },
+        containerColor = Color.Transparent,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
     ) { padding ->
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.fillMaxSize()
         ) {
             composable(Screen.Splash.route) {
                 SplashScreen(onAnimationFinished = {
@@ -418,9 +421,9 @@ fun BottomNavigationBar(
             .padding(horizontal = 16.dp, vertical = 12.dp)
             .navigationBarsPadding(),
         shape = RoundedCornerShape(32.dp),
-        tonalElevation = 0.dp,
-        shadowElevation = 12.dp,
-        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.65f)
+        tonalElevation = 8.dp,
+        shadowElevation = 8.dp,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
     ) {
         NavigationBar(
             containerColor = androidx.compose.ui.graphics.Color.Transparent,

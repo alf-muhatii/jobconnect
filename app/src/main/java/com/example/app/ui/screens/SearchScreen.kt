@@ -1,6 +1,7 @@
 package com.example.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,114 +36,119 @@ fun SearchScreen(
         it.id != currentUser?.id
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
-                        MaterialTheme.colorScheme.background
-                    )
-                )
-            )
-    ) {
-
-        Column(
+    Scaffold(
+        containerColor = Color.Transparent,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0)
+    ) { padding ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 12.dp, vertical = 12.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                            MaterialTheme.colorScheme.background
+                        )
+                    )
+                )
         ) {
 
-            // 🔥 Header
-            Text(
-                text = "Find People",
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold
-            )
-
-            Text(
-                text = "Search and connect with others",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 🔥 Search bar (cool floating style)
-            OutlinedTextField(
-                value = query,
-                onValueChange = {
-                    query = it
-                    viewModel.searchUsers(it)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(20.dp)),
-                placeholder = { Text("Search users...") },
-                singleLine = true,
-                shape = RoundedCornerShape(20.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    unfocusedBorderColor = Color.Transparent
-                )
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 🔥 Results container
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
-                    .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f))
-                    .padding(top = 8.dp)
+                    .padding(horizontal = 12.dp, vertical = 12.dp)
             ) {
 
-                if (filtered.isEmpty() && query.isNotEmpty()) {
+                // 🔥 Header
+                Text(
+                    text = "Find People",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold
+                )
 
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "No users found for \"$query\"",
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                Text(
+                    text = "Search and connect with others",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
 
-                } else {
+                Spacer(modifier = Modifier.height(16.dp))
 
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(
-                            start = 8.dp,
-                            end = 8.dp,
-                            top = 8.dp,
-                            bottom = 24.dp
-                        ),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
+                // 🔥 Search bar (cool floating style)
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = {
+                        query = it
+                        viewModel.searchUsers(it)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(20.dp)),
+                    placeholder = { Text("Search users...") },
+                    singleLine = true,
+                    shape = RoundedCornerShape(20.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = Color.Transparent
+                    )
+                )
 
-                        items(filtered) { user ->
+                Spacer(modifier = Modifier.height(16.dp))
 
-                            val isFollowing =
-                                currentUser?.following?.contains(user.id) ?: false
+                // 🔥 Results container
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp))
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f))
+                        .padding(top = 8.dp)
+                ) {
 
-                            UserCard(
-                                user = user,
-                                isFollowing = isFollowing,
-                                onFollowClick = {
-                                    viewModel.followUser(user.id)
-                                },
-                                onClick = {
-                                    selectedUser = user
-                                    showDialog = true
-                                },
-                                modifier = Modifier.fillMaxWidth()
+                    if (filtered.isEmpty() && query.isNotEmpty()) {
+
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "No users found for \"$query\"",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                        }
+
+                    } else {
+
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(
+                                start = 8.dp,
+                                end = 8.dp,
+                                top = 8.dp,
+                                bottom = 100.dp // Added bottom padding for floating bar
+                            ),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+
+                            items(filtered) { user ->
+
+                                val isFollowing =
+                                    currentUser?.following?.contains(user.id) ?: false
+
+                                UserCard(
+                                    user = user,
+                                    isFollowing = isFollowing,
+                                    onFollowClick = {
+                                        viewModel.followUser(user.id)
+                                    },
+                                    onClick = {
+                                        selectedUser = user
+                                        showDialog = true
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                )
+                            }
                         }
                     }
                 }
