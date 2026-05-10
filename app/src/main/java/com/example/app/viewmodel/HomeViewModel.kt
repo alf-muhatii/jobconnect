@@ -50,12 +50,9 @@ class HomeViewModel(
     private fun loadCurrentUser() {
         val userId = authRepo.getUserId() ?: return
         viewModelScope.launch {
-            // Fetch the user document directly by ID for better reliability
-            try {
-                val user = userRepo.getUser(userId)
+            // Use realtime flow to automatically refresh when following list changes
+            userRepo.getUserFlow(userId).collectLatest { user ->
                 _currentUser.value = user
-            } catch (e: Exception) {
-                Log.e("HomeVM", "Error fetching current user: ${e.message}")
             }
         }
     }

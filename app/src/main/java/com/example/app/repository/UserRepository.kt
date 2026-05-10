@@ -19,6 +19,14 @@ class UserRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
         return db.collection("users").document(uid).get().await().toObject(User::class.java)
     }
 
+    fun getUserFlow(uid: String): Flow<User?> = callbackFlow {
+        val subscription = db.collection("users").document(uid)
+            .addSnapshotListener { snapshot, _ ->
+                trySend(snapshot?.toObject(User::class.java))
+            }
+        awaitClose { subscription.remove() }
+    }
+
     fun searchUsers(): Flow<List<User>> = callbackFlow {
         val subscription = db.collection("users")
             .addSnapshotListener { snapshot, _ ->
