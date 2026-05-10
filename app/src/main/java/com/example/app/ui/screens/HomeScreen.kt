@@ -85,74 +85,79 @@ fun HomeScreen(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
 
             topBar = {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 12.dp)
+                Surface(
+                    color = MaterialTheme.colorScheme.background.copy(alpha = 0.5f),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .statusBarsPadding()
+                            .padding(horizontal = 12.dp, vertical = 12.dp)
                     ) {
 
-                        Column(modifier = Modifier.weight(1f)) {
-
-                            Text(
-                                text = "Discover Jobs",
-                                fontSize = 30.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-
-                            Spacer(modifier = Modifier.height(4.dp))
-
-                            Text(
-                                text = "Find your next opportunity",
-                                fontSize = 14.sp,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-
-                        Box(
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clip(CircleShape)
-                                .background(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
-                                ),
-                            contentAlignment = Alignment.Center
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
-                            IconButton(onClick = onNotificationsClick) {
-                                Icon(
-                                    imageVector = Icons.Default.Notifications,
-                                    contentDescription = "Notifications",
-                                    tint = MaterialTheme.colorScheme.primary
+
+                            Column(modifier = Modifier.weight(1f)) {
+
+                                Text(
+                                    text = "Discover Jobs",
+                                    fontSize = 30.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+
+                                Spacer(modifier = Modifier.height(4.dp))
+
+                                Text(
+                                    text = "Find your next opportunity",
+                                    fontSize = 14.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
                             }
+
+                            Box(
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                IconButton(onClick = onNotificationsClick) {
+                                    Icon(
+                                        imageVector = Icons.Default.Notifications,
+                                        contentDescription = "Notifications",
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                            }
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    OutlinedTextField(
-                        value = searchQuery,
-                        onValueChange = { searchQuery = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        placeholder = { Text("Search jobs...") },
-                        leadingIcon = {
-                            Icon(Icons.Default.Search, contentDescription = null)
-                        },
-                        singleLine = true,
-                        shape = RoundedCornerShape(22.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            unfocusedBorderColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)
+                        OutlinedTextField(
+                            value = searchQuery,
+                            onValueChange = { searchQuery = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("Search jobs...") },
+                            leadingIcon = {
+                                Icon(Icons.Default.Search, contentDescription = null)
+                            },
+                            singleLine = true,
+                            shape = RoundedCornerShape(22.dp),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                unfocusedBorderColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f),
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.6f)
+                            )
                         )
-                    )
+                    }
                 }
             },
 
@@ -174,7 +179,7 @@ fun HomeScreen(
 
             Box(
                 modifier = Modifier
-                    .padding(padding)
+                    .padding(top = padding.calculateTopPadding())
                     .fillMaxSize()
             ) {
 
@@ -193,10 +198,10 @@ fun HomeScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(
-                            start = 8.dp,   // reduced for wider cards
-                            end = 8.dp,     // reduced for wider cards
+                            start = 8.dp,
+                            end = 8.dp,
                             top = 8.dp,
-                            bottom = 100.dp
+                            bottom = 120.dp // Added space for floating bottom bar
                         ),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
@@ -252,7 +257,7 @@ fun HomeScreen(
                     exit = fadeOut(),
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(20.dp)
+                        .padding(bottom = 100.dp, start = 20.dp, end = 20.dp) // Adjusted for bottom bar
                 ) {
 
                     Card(

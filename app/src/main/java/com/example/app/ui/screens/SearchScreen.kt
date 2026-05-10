@@ -56,6 +56,7 @@ fun SearchScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .statusBarsPadding()
                     .padding(horizontal = 12.dp, vertical = 12.dp)
             ) {
 
@@ -126,7 +127,7 @@ fun SearchScreen(
                                 start = 8.dp,
                                 end = 8.dp,
                                 top = 8.dp,
-                                bottom = 100.dp // Added bottom padding for floating bar
+                                bottom = 120.dp // Space for floating bar
                             ),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {

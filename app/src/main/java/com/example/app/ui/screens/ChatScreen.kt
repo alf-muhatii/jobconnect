@@ -127,6 +127,8 @@ fun ChatScreen(
 
         Scaffold(
             containerColor = Color.Transparent,
+            // Respect top insets to keep title/buttons visible above the keyboard
+            contentWindowInsets = WindowInsets.systemBars,
 
             topBar = {
                 TopAppBar(
@@ -167,42 +169,50 @@ fun ChatScreen(
             },
 
             bottomBar = {
-                Row(
+                // Surface helps background stay solid above keyboard
+                Surface(
+                    color = MaterialTheme.colorScheme.surface,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp)
-                        .clip(RoundedCornerShape(28.dp))
-                        .background(MaterialTheme.colorScheme.surface)
-                        .padding(horizontal = 10.dp, vertical = 6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .imePadding()
+                        .navigationBarsPadding()
                 ) {
-
-                    TextField(
-                        value = text,
-                        onValueChange = { text = it },
-                        modifier = Modifier.weight(1f),
-                        placeholder = { Text("Message...") },
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent
-                        )
-                    )
-
-                    IconButton(
-                        onClick = {
-                            if (text.isNotBlank()) {
-                                viewModel.sendMessage(receiverId, text)
-                                text = ""
-                            }
-                        }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(28.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                            .padding(horizontal = 10.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Send",
-                            tint = MaterialTheme.colorScheme.primary
+
+                        TextField(
+                            value = text,
+                            onValueChange = { text = it },
+                            modifier = Modifier.weight(1f),
+                            placeholder = { Text("Message...") },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent
+                            )
                         )
+
+                        IconButton(
+                            onClick = {
+                                if (text.isNotBlank()) {
+                                    viewModel.sendMessage(receiverId, text)
+                                    text = ""
+                                }
+                            }
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Send",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
                     }
                 }
             }

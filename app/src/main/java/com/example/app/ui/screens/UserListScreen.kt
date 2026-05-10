@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.app.ui.components.EmptyState
@@ -21,7 +20,11 @@ fun UserListScreen(
 ) {
     val users by viewModel.userList.collectAsState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+    ) {
         Text(
             text = title,
             style = MaterialTheme.typography.headlineMedium,
@@ -31,7 +34,10 @@ fun UserListScreen(
         if (users.isEmpty()) {
             EmptyState("No users found.")
         } else {
-            LazyColumn {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 120.dp) // Space for floating bar
+            ) {
                 items(users) { user ->
                     ListItem(
                         headlineContent = { Text(user.name) },

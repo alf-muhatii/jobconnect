@@ -4,16 +4,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.app.ui.components.ProfileImageWithBadge
@@ -42,6 +47,7 @@ fun ProfileScreen(
         profileViewModel.loadProfile(userId)
     }
 
+    // 🔥 Background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -57,6 +63,7 @@ fun ProfileScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
                 .padding(12.dp)
         ) {
@@ -161,7 +168,7 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(30.dp))
+            Spacer(modifier = Modifier.height(120.dp)) // Space for floating bar
         }
     }
 
@@ -234,3 +241,7 @@ private fun StatCard(
         }
     }
 }
+
+// helper
+private fun String?.ifNullOrEmpty(default: String) =
+    if (this.isNullOrEmpty()) default else this

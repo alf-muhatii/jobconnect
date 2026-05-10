@@ -50,7 +50,8 @@ fun QualifiedCandidatesPage(
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                }
+                },
+                modifier = Modifier.statusBarsPadding()
             )
         },
         floatingActionButton = {
