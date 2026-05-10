@@ -162,7 +162,8 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
             if (currentRoute in listOf(Screen.Home.route, Screen.Search.route, Screen.Messages.route, Screen.Profile.route)) {
                 BottomNavigationBar(
                     navController = navController,
-                    onHomeLongClick = { showModeDialog = true }
+                    onHomeLongClick = { showModeDialog = true },
+                    onProfileLongClick = { navController.navigate(Screen.Settings.route) }
                 )
             }
         }
@@ -400,7 +401,11 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun BottomNavigationBar(navController: NavHostController, onHomeLongClick: () -> Unit) {
+fun BottomNavigationBar(
+    navController: NavHostController, 
+    onHomeLongClick: () -> Unit,
+    onProfileLongClick: () -> Unit
+) {
     val items = listOf(
         BottomNavItem("Home", Screen.Home.route, Icons.Default.Home),
         BottomNavItem("Search", Screen.Search.route, Icons.Default.Search),
@@ -413,7 +418,10 @@ fun BottomNavigationBar(navController: NavHostController, onHomeLongClick: () ->
         items.forEach { item ->
             NavigationBarItem(
                 icon = { 
-                    if (item.route == Screen.Home.route) {
+                    val isHome = item.route == Screen.Home.route
+                    val isProfile = item.route == Screen.Profile.route
+                    
+                    if (isHome || isProfile) {
                         Box(modifier = Modifier.combinedClickable(
                             onClick = {
                                 navController.navigate(item.route) {
@@ -424,7 +432,7 @@ fun BottomNavigationBar(navController: NavHostController, onHomeLongClick: () ->
                                     restoreState = true
                                 }
                             },
-                            onLongClick = onHomeLongClick
+                            onLongClick = if (isHome) onHomeLongClick else onProfileLongClick
                         )) {
                             Icon(item.icon, contentDescription = item.title)
                         }
@@ -435,7 +443,7 @@ fun BottomNavigationBar(navController: NavHostController, onHomeLongClick: () ->
                 label = { Text(item.title) },
                 selected = currentRoute == item.route,
                 onClick = {
-                    if (item.route != Screen.Home.route) {
+                    if (item.route != Screen.Home.route && item.route != Screen.Profile.route) {
                         navController.navigate(item.route) {
                             popUpTo(navController.graph.startDestinationId) {
                                 saveState = true
