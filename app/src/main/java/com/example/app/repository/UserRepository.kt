@@ -114,6 +114,12 @@ class UserRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
         }
     }
 
+    suspend fun dismissNotifications(userId: String, notificationIds: List<String>) {
+        db.collection("users").document(userId)
+            .update("dismissedNotifications", FieldValue.arrayUnion(*notificationIds.toTypedArray()))
+            .await()
+    }
+
     fun getPendingVerifications(): Flow<List<User>> = callbackFlow {
         val subscription = db.collection("users")
             .whereEqualTo("verificationRequested", true)

@@ -31,11 +31,12 @@ class NotificationViewModel(
             combine(
                 chatRepo.getConversations(currentUserId),
                 userRepo.searchUsers(),
-                jobRepo.getJobPosts()
-            ) { conversations, allUsers, allJobs ->
-                val currentUser = allUsers.find { it.id == currentUserId }
+                jobRepo.getJobPosts(),
+                userRepo.getUserFlow(currentUserId)
+            ) { conversations, allUsers, allJobs, currentUser ->
                 val followingIds = currentUser?.following ?: emptyList()
                 val followerIds = currentUser?.followers ?: emptyList()
+                val dismissedIds = currentUser?.dismissedNotifications ?: emptyList()
                 
                 val combinedList = mutableListOf<Notification>()
                 
@@ -94,10 +95,27 @@ class NotificationViewModel(
                     }
                 }
                 
-                combinedList.sortedByDescending { it.timestamp }
+                // Filter out dismissed notifications
+                combinedList
+                    .filter { it.id !in dismissedIds }
+                    .sortedByDescending { it.timestamp }
             }.collectLatest {
                 _notifications.value = it
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun clearNotifications() {
+        val currentUserId = authRepo.getUserId() ?: return
+        val currentIds = _notifications.value.map { it.id }
+        if (currentIds.isEmpty()) return
+
+        viewModelScope.launch {
+            try {
+                userRepo.dismissNotifications(currentUserId, currentIds)
+            } catch (e: Exception) {
+                android.util.Log.e("NotificationVM", "Clear failed: ${e.message}")
             }
         }
     }

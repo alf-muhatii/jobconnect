@@ -13,5 +13,6 @@ data class User(
     val following: List<String> = emptyList(),
     val savedJobs: List<String> = emptyList(),
     @get:PropertyName("isVerified") @set:PropertyName("isVerified") var isVerified: Boolean = false,
-    @get:PropertyName("verificationRequested") @set:PropertyName("verificationRequested") var verificationRequested: Boolean = false
+    @get:PropertyName("verificationRequested") @set:PropertyName("verificationRequested") var verificationRequested: Boolean = false,
+    val dismissedNotifications: List<String> = emptyList()
 )

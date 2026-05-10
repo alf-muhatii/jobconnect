@@ -8,6 +8,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -53,6 +54,17 @@ fun NotificationsScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            if (notifications.isNotEmpty()) {
+                ExtendedFloatingActionButton(
+                    onClick = { viewModel.clearNotifications() },
+                    icon = { Icon(Icons.Default.DeleteSweep, contentDescription = null) },
+                    text = { Text("Clear All") },
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                )
+            }
         }
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize()) {
