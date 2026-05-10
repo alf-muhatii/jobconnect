@@ -185,7 +185,10 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
                     viewModel = homeViewModel,
                     onPostJobClick = { navController.navigate(Screen.PostJob.route) },
                     onNotificationsClick = { navController.navigate(Screen.Notifications.route) },
-                    onNavigateToSaved = { navController.navigate(Screen.SavedJobs.route) }
+                    onNavigateToSaved = { navController.navigate(Screen.SavedJobs.route) },
+                    onAuthorClick = { userId ->
+                        navController.navigate(Screen.OtherProfile.createRoute(userId))
+                    }
                 )
             }
             composable(Screen.Notifications.route) {
@@ -242,6 +245,21 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
                         navController.navigate(Screen.Following.createRoute(userId))
                     },
                     onSettingsClick = { navController.navigate(Screen.Settings.route) }
+                )
+            }
+            composable(Screen.OtherProfile.route) { backStackEntry ->
+                val userId = backStackEntry.arguments?.getString("userId") ?: ""
+                ProfileScreen(
+                    userId = userId,
+                    profileViewModel = profileViewModel,
+                    onEditProfileClick = {}, // Not used
+                    onFollowersClick = { uid ->
+                        navController.navigate(Screen.Followers.createRoute(uid))
+                    },
+                    onFollowingClick = { uid ->
+                        navController.navigate(Screen.Following.createRoute(uid))
+                    },
+                    onSettingsClick = {} // Not used
                 )
             }
             composable(Screen.Settings.route) {

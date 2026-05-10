@@ -31,4 +31,7 @@ sealed class Screen(val route: String) {
     object SavedJobs : Screen("saved_jobs")
     object Settings : Screen("settings")
     object Verification : Screen("verification")
+    object OtherProfile : Screen("other_profile/{userId}") {
+        fun createRoute(userId: String) = "other_profile/$userId"
+    }
 }

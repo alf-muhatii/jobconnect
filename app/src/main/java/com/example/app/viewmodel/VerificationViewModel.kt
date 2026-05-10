@@ -50,7 +50,11 @@ class VerificationViewModel(
 
     fun verifyUser(userId: String, verify: Boolean) {
         viewModelScope.launch {
-            userRepo.verifyUser(userId, verify)
+            try {
+                userRepo.verifyUser(userId, verify)
+            } catch (e: Exception) {
+                android.util.Log.e("VerificationVM", "Verification failed: ${e.message}")
+            }
         }
     }
 }

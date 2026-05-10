@@ -35,7 +35,8 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onPostJobClick: () -> Unit,
     onNotificationsClick: () -> Unit,
-    onNavigateToSaved: () -> Unit
+    onNavigateToSaved: () -> Unit,
+    onAuthorClick: (String) -> Unit
 ) {
 
     val jobs by viewModel.jobs.collectAsState()
@@ -191,8 +192,8 @@ fun HomeScreen(
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         contentPadding = PaddingValues(
-                            start = 8.dp,   // 🔥 reduced for wider cards
-                            end = 8.dp,     // 🔥 reduced for wider cards
+                            start = 8.dp,   // reduced for wider cards
+                            end = 8.dp,     // reduced for wider cards
                             top = 8.dp,
                             bottom = 100.dp
                         ),
@@ -217,6 +218,7 @@ fun HomeScreen(
                                             showSavedPopup = true
                                         }
                                     },
+                                    onAuthorClick = onAuthorClick,
                                     modifier = Modifier.fillMaxWidth()
                                 )
 

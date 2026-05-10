@@ -1,5 +1,7 @@
 package com.example.app.model
 
+import com.google.firebase.firestore.PropertyName
+
 data class User(
     val id: String = "",
     val name: String = "",
@@ -10,6 +12,6 @@ data class User(
     val followers: List<String> = emptyList(),
     val following: List<String> = emptyList(),
     val savedJobs: List<String> = emptyList(),
-    val isVerified: Boolean = false,
-    val verificationRequested: Boolean = false
+    @get:PropertyName("isVerified") @set:PropertyName("isVerified") var isVerified: Boolean = false,
+    @get:PropertyName("verificationRequested") @set:PropertyName("verificationRequested") var verificationRequested: Boolean = false
 )

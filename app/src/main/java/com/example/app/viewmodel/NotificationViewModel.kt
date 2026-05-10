@@ -28,10 +28,9 @@ class NotificationViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             
-            // 1. Combine Messages, Job Posts, and Followers
             combine(
                 chatRepo.getConversations(currentUserId),
-                userRepo.searchUsers(), // To get full user data for following list
+                userRepo.searchUsers(),
                 jobRepo.getJobPosts()
             ) { conversations, allUsers, allJobs ->
                 val currentUser = allUsers.find { it.id == currentUserId }
@@ -39,8 +38,44 @@ class NotificationViewModel(
                 val followerIds = currentUser?.followers ?: emptyList()
                 
                 val combinedList = mutableListOf<Notification>()
+                
+                // Messages
+                conversations.forEach { conv ->
+                    val partnerId = conv.participants.find { it != currentUserId }
+                    val partner = allUsers.find { it.id == partnerId }
+                    if (partner != null && conv.lastMessage.isNotEmpty()) {
+                        combinedList.add(
+                            Notification(
+                                id = conv.id,
+                                type = NotificationType.MESSAGE,
+                                fromUserId = partner.id,
+                                fromUserName = partner.name,
+                                fromUserProfilePic = partner.profilePictureUrl,
+                                isFromUserVerified = partner.isVerified,
+                                content = "Sent you a message: ${conv.lastMessage}",
+                                timestamp = conv.timestamp
+                            )
+                        )
+                    }
+                }
+                
+                // Jobs
+                allJobs.filter { it.authorId in followingIds }.forEach { job ->
+                    combinedList.add(
+                        Notification(
+                            id = job.id,
+                            type = NotificationType.JOB_POST,
+                            fromUserId = job.authorId,
+                            fromUserName = job.authorName,
+                            fromUserProfilePic = job.authorProfilePicture,
+                            isFromUserVerified = job.isAuthorVerified,
+                            content = "Posted a new job: ${job.title}",
+                            timestamp = job.timestamp
+                        )
+                    )
+                }
 
-                // Add Follower Notifications
+                // Followers
                 followerIds.forEach { fid ->
                     val follower = allUsers.find { it.id == fid }
                     if (follower != null) {
@@ -51,50 +86,14 @@ class NotificationViewModel(
                                 fromUserId = follower.id,
                                 fromUserName = follower.name,
                                 fromUserProfilePic = follower.profilePictureUrl,
+                                isFromUserVerified = follower.isVerified,
                                 content = "Started following you",
-                                timestamp = System.currentTimeMillis() // Current time since we don't store individual follow dates
+                                timestamp = System.currentTimeMillis()
                             )
                         )
                     }
                 }
                 
-                // Add Message Notifications (Latest message in each conversation)
-                conversations.forEach { conv ->
-                    // Find the other person in the chat
-                    val partnerId = conv.participants.find { it != currentUserId }
-                    val partner = allUsers.find { it.id == partnerId }
-                    
-                    if (partner != null && conv.lastMessage.isNotEmpty()) {
-                        combinedList.add(
-                            Notification(
-                                id = conv.id,
-                                type = NotificationType.MESSAGE,
-                                fromUserId = partner.id,
-                                fromUserName = partner.name,
-                                fromUserProfilePic = partner.profilePictureUrl,
-                                content = "Sent you a message: ${conv.lastMessage}",
-                                timestamp = conv.timestamp
-                            )
-                        )
-                    }
-                }
-                
-                // Add Job Post Notifications (Only from accounts I follow)
-                allJobs.filter { it.authorId in followingIds }.forEach { job ->
-                    combinedList.add(
-                        Notification(
-                            id = job.id,
-                            type = NotificationType.JOB_POST,
-                            fromUserId = job.authorId,
-                            fromUserName = job.authorName,
-                            fromUserProfilePic = job.authorProfilePicture,
-                            content = "Posted a new job: ${job.title}",
-                            timestamp = job.timestamp
-                        )
-                    )
-                }
-                
-                // Sort by newest first
                 combinedList.sortedByDescending { it.timestamp }
             }.collectLatest {
                 _notifications.value = it

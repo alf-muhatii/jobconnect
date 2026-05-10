@@ -5,24 +5,21 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.example.app.model.User
 import com.example.app.ui.components.EmptyState
 import com.example.app.ui.components.LoadingScreen
+import com.example.app.ui.components.ProfileImageWithBadge
 import com.example.app.viewmodel.QualifiedCandidateViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,7 +48,7 @@ fun QualifiedCandidatesPage(
                 title = { Text(jobClassTitle) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -59,7 +56,7 @@ fun QualifiedCandidatesPage(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = { onSendApprovalClick(jobClassId) },
-                icon = { Icon(Icons.Default.Send, contentDescription = null) },
+                icon = { Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null) },
                 text = { Text("Send Letter of Approval") },
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer
@@ -179,13 +176,10 @@ fun CandidateItem(user: User, onRemoveClick: () -> Unit) {
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = user.profilePictureUrl.ifEmpty { "https://cdn-icons-png.flaticon.com/512/149/149071.png" },
-                contentDescription = null,
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
+            ProfileImageWithBadge(
+                imageUrl = user.profilePictureUrl,
+                isVerified = user.isVerified,
+                size = 50.dp
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {

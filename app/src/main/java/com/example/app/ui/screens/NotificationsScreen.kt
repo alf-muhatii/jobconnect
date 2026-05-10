@@ -3,24 +3,23 @@ package com.example.app.ui.screens
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.example.app.model.Notification
 import com.example.app.model.NotificationType
 import com.example.app.ui.components.EmptyState
 import com.example.app.ui.components.LoadingScreen
+import com.example.app.ui.components.ProfileImageWithBadge
 import com.example.app.viewmodel.NotificationViewModel
 import com.example.app.viewmodel.HomeViewModel
 import java.text.SimpleDateFormat
@@ -50,7 +49,7 @@ fun NotificationsScreen(
                 title = { Text("Notifications") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 }
             )
@@ -144,21 +143,29 @@ fun NotificationCard(
             modifier = Modifier.padding(12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            AsyncImage(
-                model = notification.fromUserProfilePic.ifEmpty { "https://cdn-icons-png.flaticon.com/512/149/149071.png" },
-                contentDescription = null,
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape),
-                contentScale = ContentScale.Crop
+            ProfileImageWithBadge(
+                imageUrl = notification.fromUserProfilePic,
+                isVerified = notification.isFromUserVerified,
+                size = 50.dp
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = notification.fromUserName,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = notification.fromUserName,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (notification.isFromUserVerified) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = "Verified",
+                            tint = Color(0xFF1DA1F2),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
                 Text(
                     text = notification.content,
                     style = MaterialTheme.typography.bodyMedium,

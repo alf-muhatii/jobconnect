@@ -13,11 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import com.example.app.ui.components.EmptyState
+import com.example.app.ui.components.ProfileImageWithBadge
 import com.example.app.viewmodel.ChatViewModel
 
 @Composable
@@ -88,6 +87,7 @@ fun MessagesScreen(
                             name = user.name,
                             bio = user.bio,
                             imageUrl = user.profilePictureUrl,
+                            isVerified = user.isVerified,
                             onClick = { onChatClick(user.id) }
                         )
                     }
@@ -102,6 +102,7 @@ private fun ChatRow(
     name: String,
     bio: String,
     imageUrl: String,
+    isVerified: Boolean,
     onClick: () -> Unit
 ) {
 
@@ -123,29 +124,12 @@ private fun ChatRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // 🔥 Avatar
-            Box {
-
-                AsyncImage(
-                    model = imageUrl.ifEmpty {
-                        "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                    },
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop
-                )
-
-                // subtle online dot (cool UI touch)
-                Box(
-                    modifier = Modifier
-                        .size(12.dp)
-                        .align(Alignment.BottomEnd)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
-                )
-            }
+            // 🔥 Avatar with Badge
+            ProfileImageWithBadge(
+                imageUrl = imageUrl,
+                isVerified = isVerified,
+                size = 54.dp
+            )
 
             Spacer(modifier = Modifier.width(12.dp))
 

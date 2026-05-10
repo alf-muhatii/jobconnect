@@ -10,6 +10,7 @@ data class Notification(
     val fromUserId: String = "",
     val fromUserName: String = "",
     val fromUserProfilePic: String = "",
+    val isFromUserVerified: Boolean = false,
     val content: String = "",
     val timestamp: Long = System.currentTimeMillis()
 )

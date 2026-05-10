@@ -8,12 +8,82 @@ import androidx.compose.ui.Modifier
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Work
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+
+@Composable
+fun ProfileImageWithBadge(
+    imageUrl: String?,
+    isVerified: Boolean,
+    size: Dp,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.size(size)) {
+        AsyncImage(
+            model = if (imageUrl.isNullOrEmpty())
+                "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+            else imageUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
+        )
+
+        if (isVerified) {
+            val badgeSize = size * 0.28f
+            Surface(
+                modifier = Modifier
+                    .size(badgeSize)
+                    .align(Alignment.BottomEnd),
+                shape = CircleShape,
+                color = Color.White,
+                shadowElevation = 2.dp
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = "Verified",
+                        tint = Color(0xFF1DA1F2),
+                        modifier = Modifier.fillMaxSize(0.9f)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun VerifiedLabel(modifier: Modifier = Modifier) {
+    Row(
+        modifier = modifier
+            .background(Color(0xFF1DA1F2).copy(alpha = 0.1f), MaterialTheme.shapes.small)
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Default.CheckCircle,
+            contentDescription = null,
+            tint = Color(0xFF1DA1F2),
+            modifier = Modifier.size(16.dp)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = "This account is verified",
+            style = MaterialTheme.typography.labelSmall,
+            color = Color(0xFF1DA1F2),
+            fontWeight = FontWeight.Bold
+        )
+    }
+}
 
 @Composable
 fun KaziKenyaLogo(modifier: Modifier = Modifier, size: Int = 80) {

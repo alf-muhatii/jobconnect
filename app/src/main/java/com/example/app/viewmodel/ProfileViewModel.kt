@@ -22,6 +22,9 @@ class ProfileViewModel(
     private val _userProfile = MutableStateFlow<User?>(null)
     val userProfile: StateFlow<User?> = _userProfile
 
+    private val _otherUser = MutableStateFlow<User?>(null)
+    val otherUser: StateFlow<User?> = _otherUser
+
     private val _isUpdating = MutableStateFlow(false)
     val isUpdating: StateFlow<Boolean> = _isUpdating
 
@@ -30,15 +33,20 @@ class ProfileViewModel(
 
     fun clear() {
         _userProfile.value = null
+        _otherUser.value = null
         _userList.value = emptyList()
     }
 
-    fun loadProfile() {
+    fun loadProfile(userId: String? = null) {
         viewModelScope.launch {
             try {
-                val uid = authRepo.getUserId() ?: return@launch
+                val uid = userId ?: authRepo.getUserId() ?: return@launch
                 val user = userRepo.getUser(uid)
-                _userProfile.value = user
+                if (userId == null) {
+                    _userProfile.value = user
+                } else {
+                    _otherUser.value = user
+                }
             } catch (e: Exception) {
                 android.util.Log.e("ProfileVM", "Error loading profile: ${e.message}")
             }
@@ -72,7 +80,7 @@ class ProfileViewModel(
                 userRepo.applyForVerification(userId)
                 loadProfile() // Refresh local state
             } catch (e: Exception) {
-                // handle error
+                android.util.Log.e("ProfileVM", "Apply verification failed: ${e.message}")
             }
         }
     }

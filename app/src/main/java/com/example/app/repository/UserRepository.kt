@@ -94,12 +94,16 @@ class UserRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
     }
 
     suspend fun verifyUser(userId: String, verify: Boolean) {
-        db.collection("users").document(userId)
-            .update(mapOf(
-                "isVerified" to verify,
-                "verificationRequested" to false
-            ))
-            .await()
+        try {
+            db.collection("users").document(userId)
+                .update(mapOf(
+                    "isVerified" to verify,
+                    "verificationRequested" to false
+                )).await()
+        } catch (e: Exception) {
+            android.util.Log.e("UserRepo", "verifyUser failed: ${e.message}")
+            throw e
+        }
     }
 
     fun getPendingVerifications(): Flow<List<User>> = callbackFlow {
