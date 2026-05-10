@@ -8,10 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.app.model.User
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 
 @Composable
 fun UserCard(
@@ -41,7 +44,18 @@ fun UserCard(
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1.0f)) {
-                Text(text = user.name, style = MaterialTheme.typography.titleMedium)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = user.name, style = MaterialTheme.typography.titleMedium)
+                    if (user.isVerified) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.CheckCircle,
+                            contentDescription = "Verified",
+                            tint = Color(0xFF1DA1F2),
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
                 Text(text = user.bio, style = MaterialTheme.typography.bodySmall, maxLines = 1)
             }
             Button(onClick = onFollowClick) {

@@ -7,5 +7,6 @@ data class JobPost(
     val authorProfilePicture: String = "",
     val title: String = "",
     val description: String = "",
-    val timestamp: Long = System.currentTimeMillis()
+    val timestamp: Long = System.currentTimeMillis(),
+    val isAuthorVerified: Boolean = false
 )

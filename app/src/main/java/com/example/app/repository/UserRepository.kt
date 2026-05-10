@@ -87,6 +87,31 @@ class UserRepository(private val db: FirebaseFirestore = FirebaseFirestore.getIn
             .await()
     }
 
+    suspend fun applyForVerification(userId: String) {
+        db.collection("users").document(userId)
+            .update("verificationRequested", true)
+            .await()
+    }
+
+    suspend fun verifyUser(userId: String, verify: Boolean) {
+        db.collection("users").document(userId)
+            .update(mapOf(
+                "isVerified" to verify,
+                "verificationRequested" to false
+            ))
+            .await()
+    }
+
+    fun getPendingVerifications(): Flow<List<User>> = callbackFlow {
+        val subscription = db.collection("users")
+            .whereEqualTo("verificationRequested", true)
+            .addSnapshotListener { snapshot, _ ->
+                val users = snapshot?.toObjects(User::class.java) ?: emptyList()
+                trySend(users)
+            }
+        awaitClose { subscription.remove() }
+    }
+
     fun getFollowedUsers(userId: String): Flow<List<User>> = callbackFlow {
         // First get the following list of current user
         val subscription = db.collection("users").document(userId)

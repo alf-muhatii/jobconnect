@@ -5,12 +5,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.DarkMode
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.ExitToApp
-import androidx.compose.material.icons.filled.Work
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.example.app.viewmodel.AuthViewModel
+import com.example.app.viewmodel.ProfileViewModel
 import com.example.app.viewmodel.ThemeViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,15 +21,20 @@ import com.example.app.viewmodel.ThemeViewModel
 fun SettingsScreen(
     themeViewModel: ThemeViewModel,
     authViewModel: AuthViewModel,
+    profileViewModel: ProfileViewModel,
     onBack: () -> Unit,
     onEditProfileClick: () -> Unit,
     onPostJobClick: () -> Unit,
     onManageJobsClick: () -> Unit,
     onQualifiedCandidateClick: () -> Unit,
     onSavedJobsClick: () -> Unit,
+    onVerifyAccountsClick: () -> Unit,
     onLogoutSuccess: () -> Unit
 ) {
     val isDarkMode by themeViewModel.isDarkMode.collectAsState()
+    val user by profileViewModel.userProfile.collectAsState()
+    
+    val isAlf = user?.email == "muhatialf@gmail.com"
 
     Scaffold(
         topBar = {
@@ -65,12 +66,27 @@ fun SettingsScreen(
 
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
 
-            // Action Buttons (Moved from Profile)
+            // Action Buttons
             SettingsActionItem(
                 title = "Edit Profile",
                 icon = Icons.Default.Edit,
                 onClick = onEditProfileClick
             )
+
+            // Verification Section
+            if (isAlf) {
+                SettingsActionItem(
+                    title = "Verify Accounts",
+                    icon = Icons.Default.Verified,
+                    onClick = onVerifyAccountsClick
+                )
+            } else if (user?.isVerified == false) {
+                SettingsActionItem(
+                    title = if (user?.verificationRequested == true) "Verification Pending..." else "Apply for Verification",
+                    icon = Icons.Default.Verified,
+                    onClick = { if (user?.verificationRequested == false) profileViewModel.applyForVerification() }
+                )
+            }
 
             SettingsActionItem(
                 title = "Post a New Job",
@@ -80,7 +96,7 @@ fun SettingsScreen(
 
             SettingsActionItem(
                 title = "Manage My Jobs",
-                icon = Icons.Default.Work, // Changed from Edit to Work or similar if needed
+                icon = Icons.Default.WorkOutline,
                 onClick = onManageJobsClick
             )
 

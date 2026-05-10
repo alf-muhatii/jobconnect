@@ -115,6 +115,7 @@ class HomeViewModel(
             // If user isn't in Firestore yet, use Auth display name as fallback
             val authorName = user?.name ?: authRepo.getCurrentUser()?.displayName ?: "User"
             val profilePic = user?.profilePictureUrl ?: ""
+            val isVerified = user?.isVerified ?: false
 
             val job = JobPost(
                 authorId = userId,
@@ -122,7 +123,8 @@ class HomeViewModel(
                 authorProfilePicture = profilePic,
                 title = title,
                 description = description,
-                timestamp = System.currentTimeMillis()
+                timestamp = System.currentTimeMillis(),
+                isAuthorVerified = isVerified
             )
             
             try {

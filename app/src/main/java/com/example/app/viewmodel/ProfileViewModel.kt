@@ -65,6 +65,18 @@ class ProfileViewModel(
         }
     }
 
+    fun applyForVerification() {
+        val userId = authRepo.getUserId() ?: return
+        viewModelScope.launch {
+            try {
+                userRepo.applyForVerification(userId)
+                loadProfile() // Refresh local state
+            } catch (e: Exception) {
+                // handle error
+            }
+        }
+    }
+
     suspend fun updateProfile(name: String, bio: String, imageUri: Uri?): Boolean {
         _isUpdating.value = true
         try {

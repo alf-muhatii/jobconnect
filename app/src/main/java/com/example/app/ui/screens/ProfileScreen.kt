@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,7 @@ fun ProfileScreen(
         profileViewModel.loadProfile()
     }
 
+    // 🔥 Background
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,16 +90,31 @@ fun ProfileScreen(
                     modifier = Modifier.padding(20.dp)
                 ) {
 
-                    AsyncImage(
-                        model = user?.profilePictureUrl.ifNullOrEmpty(
-                            "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                        ),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(110.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
+                    Box {
+                        AsyncImage(
+                            model = user?.profilePictureUrl.ifNullOrEmpty(
+                                "https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                            ),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(110.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop
+                        )
+                        
+                        if (user?.isVerified == true) {
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = "Verified",
+                                tint = Color(0xFF1DA1F2),
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .align(Alignment.BottomEnd)
+                                    .background(Color.White, CircleShape)
+                                    .padding(2.dp)
+                            )
+                        }
+                    }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
@@ -151,7 +169,7 @@ fun ProfileScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Only primary actions left here
+            // Only primary action left here
             Button(
                 onClick = onEditProfileClick,
                 modifier = Modifier.fillMaxWidth(),

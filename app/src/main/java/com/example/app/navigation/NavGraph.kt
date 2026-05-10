@@ -90,6 +90,12 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
         }
     })
 
+    val verificationViewModel: VerificationViewModel = viewModel(factory = object : androidx.lifecycle.ViewModelProvider.Factory {
+        override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
+            return VerificationViewModel(userRepo, authRepo) as T
+        }
+    })
+
     var showModeDialog by remember { mutableStateOf(false) }
 
     if (showModeDialog) {
@@ -242,12 +248,14 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
                 SettingsScreen(
                     themeViewModel = themeViewModel,
                     authViewModel = authViewModel,
+                    profileViewModel = profileViewModel,
                     onBack = { navController.popBackStack() },
                     onEditProfileClick = { navController.navigate(Screen.EditProfile.route) },
                     onPostJobClick = { navController.navigate(Screen.PostJob.route) },
                     onManageJobsClick = { navController.navigate(Screen.ManageJobs.route) },
                     onQualifiedCandidateClick = { navController.navigate(Screen.QualifiedCandidate.route) },
                     onSavedJobsClick = { navController.navigate(Screen.SavedJobs.route) },
+                    onVerifyAccountsClick = { navController.navigate(Screen.Verification.route) },
                     onLogoutSuccess = {
                         profileViewModel.clear()
                         chatViewModel.clear()
@@ -255,6 +263,12 @@ fun NavGraph(navController: NavHostController, themeViewModel: ThemeViewModel) {
                             popUpTo(0)
                         }
                     }
+                )
+            }
+            composable(Screen.Verification.route) {
+                VerificationScreen(
+                    viewModel = verificationViewModel,
+                    onBack = { navController.popBackStack() }
                 )
             }
             composable(Screen.SavedJobs.route) {

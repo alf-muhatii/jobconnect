@@ -9,5 +9,7 @@ data class User(
     val profilePictureUrl: String = "",
     val followers: List<String> = emptyList(),
     val following: List<String> = emptyList(),
-    val savedJobs: List<String> = emptyList()
+    val savedJobs: List<String> = emptyList(),
+    val isVerified: Boolean = false,
+    val verificationRequested: Boolean = false
 )
